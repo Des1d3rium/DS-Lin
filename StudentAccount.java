@@ -3,6 +3,9 @@ public class StudentAccount extends Account
     LibraryAccount libraryAccountOfStudent = new LibraryAccount("", 0, 0.0, 0.0);
     CreditAccount tuitionAccountOfStudent = new CreditAccount("", 0.0);
     CreditAccount diningAccountOfStudent = new CreditAccount("", 0.0);
+    private String accountName;
+    private String accountAddress;
+    private double refundOfAccount;
     
     public StudentAccount(String accountNumber, String accountName)
     {
@@ -10,22 +13,42 @@ public class StudentAccount extends Account
         this.accountName = accountName;
     }
 
-    @override
-    public void getBalance()
+    public double getBalance()
     {
-        return libraryAccountOfStudent.getBalance()+tuitionAccountOfStudent.getBalance()+diningAccountOfStudent.getBalance();
+        return libraryAccountOfStudent.getBalance()+tuitionAccountOfStudent.getBalance()+diningAccountOfStudent.getBalance() - refundOfAccount;
     } 
 
-    @override
-    public void charge()
+
+    public void charge(double inputAmount)
     {
-        
+        if(inputAmount > refundOfAccount)
+        {
+            tuitionAccountOfStudent.charge(inputAmount);
+            this.refundOfAccount = 0;
+        }
+        else
+        {
+            tuitionAccountOfStudent.credit(inputAmount);
+        }
     }
 
-    @override
-    public void credit()
-    {
 
+    public void credit(double inputAmount)
+    {
+        if(inputAmount - tuitionAccountOfStudent.getMonthlyPayment() > 0)
+        {
+            if(inputAmount - tuitionAccountOfStudent.getMonthlyPayment() - diningAccountOfStudent.getMonthlyPayment() > 0)
+            {
+                if(inputAmount - tuitionAccountOfStudent.getMonthlyPayment() - diningAccountOfStudent.getMonthlyPayment() - libraryAccountOfStudent.getBalance() > 0)
+                {
+                 
+                this.refundOfAccount = inputAmount - tuitionAccountOfStudent.getMonthlyPayment() - diningAccountOfStudent.getMonthlyPayment() - libraryAccountOfStudent.getBalance();  
+                libraryAccountOfStudent.credit(libraryAccountOfStudent.getBalance());
+                }
+            diningAccountOfStudent.credit(diningAccountOfStudent.getMonthlyPayment());
+            }
+        tuitionAccountOfStudent.credit(tuitionAccountOfStudent.getMonthlyPayment());
+        }
     }
 
     // method that set the name of the account owner
@@ -43,7 +66,7 @@ public class StudentAccount extends Account
     // method that set the address of the account owner
     public void setAddress(String accountAddress)
     {
-        this.accountAddress = accountaddress;
+        this.accountAddress = accountAddress;
     }
 
     // method that get the address of the account owner

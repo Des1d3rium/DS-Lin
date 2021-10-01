@@ -1,7 +1,8 @@
-public class CreditAccount
+public class CreditAccount extends Account 
 {
     // field that store amount paid this month
     private double amountPaidThisMonth;
+    private double interestRate;
 
     public CreditAccount(String accountNumber, double interestRate)
     {
@@ -9,10 +10,9 @@ public class CreditAccount
         this.interestRate = interestRate;
     }
 
-    @override
     public void credit(double creditAmount)
     {
-        super.credit(creditAmount);
+        credit(creditAmount);
         this.amountPaidThisMonth = creditAmount;
     } 
 
@@ -44,7 +44,7 @@ public class CreditAccount
     // method that return the amount paid this month
     public double getAmountPaidThisMonth()
     {
-        return amountPaidThisMonth();
+        return this.amountPaidThisMonth;
     }
 
     // method that 
@@ -52,7 +52,7 @@ public class CreditAccount
     {  
         if(this.getAmountPaidThisMonth() < this.getMonthlyPayment());
         {
-            this.charge(this.getBalance()*this.getInterestRate()/12);
+            this.charge(getBalance()*this.getInterestRate()/12);
         }
         // setting the monthly payment to be equal;
         this.amountPaidThisMonth = 0;
