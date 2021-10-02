@@ -1,11 +1,26 @@
+/* Dasheng Lin
+ * class StudentAccount represent the real student account which consist with library account and credit account
+ */
+
 public class StudentAccount extends Account
 {
-    LibraryAccount libraryAccountOfStudent = new LibraryAccount("", 0, 0.0, 0.0);
-    CreditAccount tuitionAccountOfStudent = new CreditAccount("", 0.0);
-    CreditAccount diningAccountOfStudent = new CreditAccount("", 0.0);
-    private String accountName;
-    private String accountAddress;
-    private double refundOfAccount;
+    // field that store the library account
+    LibraryAccount libraryAccountOfStudent = new LibraryAccount("library account", 0, 0.0, 0.0);
+    
+    // field that store the tuition account 
+    CreditAccount tuitionAccountOfStudent = new CreditAccount("tuition account", 0.0);
+    
+    // field that store the dining account
+    CreditAccount diningAccountOfStudent = new CreditAccount("dining account", 0.0);
+   
+    // field that store the name of account
+    private String accountName = "account name";
+
+    // field that store the address of account
+    private String accountAddress = "account address";
+
+    // field that store the refund of account
+    private double refundOfAccount = 200.0;
     
     public StudentAccount(String accountNumber, String accountName)
     {
@@ -13,41 +28,59 @@ public class StudentAccount extends Account
         this.accountName = accountName;
     }
 
+    // the override of method from Account class, return the amount of balance after adding all balance and subtracting the refund.  
     public double getBalance()
     {
-        return libraryAccountOfStudent.getBalance()+tuitionAccountOfStudent.getBalance()+diningAccountOfStudent.getBalance() - refundOfAccount;
+        return libraryAccountOfStudent.getBalance() + tuitionAccountOfStudent.getBalance() + diningAccountOfStudent.getBalance() - refundOfAccount;
     } 
 
-
+    // method that interact the value subtracting input by refund to the balance of tuition account. 
     public void charge(double inputAmount)
     {
-        if(inputAmount > refundOfAccount)
+      double difference = this.refundOfAccount - inputAmount;
+        if(difference > 0.0)
         {
-            tuitionAccountOfStudent.charge(inputAmount);
-            this.refundOfAccount = 0;
+            super.charge(difference);
+            this.refundOfAccount = 0.0;
+        }
+        else
+        {
+            this.refundOfAccount = - difference;
+        }
+    }
+
+    /* the following method reduce the balance with input following the sequence: library account, dining account and tuition account; For the 
+     * dining account and tuition account, the amount of balance that equal to their monthly payment should remain; For the library account, the amount of balance should at least be 0.
+    */ 
+    public void credit(double inputAmount)
+    {
+      double diningDifference = diningAccountOfStudent.getAmountPaidThisMonth() - diningAccountOfStudent.getMonthlyPayment();
+      double tuitionDifference = tuitionAccountOfStudent.getAmountPaidThisMonth() - tuitionAccountOfStudent.getMonthlyPayment();
+        if(inputAmount - tuitionDifference > 0)
+        {
+            if(inputAmount - tuitionDifference - diningDifference > 0)
+            {
+                if(inputAmount - tuitionDifference - diningDifference - libraryAccountOfStudent.getBalance() > 0)
+                {
+                 
+                    this.refundOfAccount += (inputAmount - tuitionDifference - diningDifference - libraryAccountOfStudent.getBalance());  
+                    libraryAccountOfStudent.credit(libraryAccountOfStudent.getBalance());
+                }
+                else
+                {
+                    libraryAccountOfStudent.credit(inputAmount - tuitionDifference - diningDifference);
+                }
+            diningAccountOfStudent.credit(diningDifference);
+            }
+            else
+            {
+                diningAccountOfStudent.credit(inputAmount - tuitionDifference);
+            }
+        tuitionAccountOfStudent.credit(tuitionDifference);
         }
         else
         {
             tuitionAccountOfStudent.credit(inputAmount);
-        }
-    }
-
-
-    public void credit(double inputAmount)
-    {
-        if(inputAmount - tuitionAccountOfStudent.getMonthlyPayment() > 0)
-        {
-            if(inputAmount - tuitionAccountOfStudent.getMonthlyPayment() - diningAccountOfStudent.getMonthlyPayment() > 0)
-            {
-                if(inputAmount - tuitionAccountOfStudent.getMonthlyPayment() - diningAccountOfStudent.getMonthlyPayment() - libraryAccountOfStudent.getBalance() > 0)
-                {
-                 
-                this.refundOfAccount = inputAmount - tuitionAccountOfStudent.getMonthlyPayment() - diningAccountOfStudent.getMonthlyPayment() - libraryAccountOfStudent.getBalance();  
-                libraryAccountOfStudent.credit(libraryAccountOfStudent.getBalance());
-                }
-            diningAccountOfStudent.credit(diningAccountOfStudent.getMonthlyPayment());
-            }
-        tuitionAccountOfStudent.credit(tuitionAccountOfStudent.getMonthlyPayment());
         }
     }
 
@@ -58,7 +91,7 @@ public class StudentAccount extends Account
     }
 
     // method that return the name of the account owner
-    public String getname()
+    public String getName()
     {
         return this.accountName;
     }
@@ -108,6 +141,6 @@ public class StudentAccount extends Account
     // method that return the dining account
     public CreditAccount getDiningAccount()
     {
-        return this.tuitionAccountOfStudent;
+        return this.diningAccountOfStudent;
     }
 }

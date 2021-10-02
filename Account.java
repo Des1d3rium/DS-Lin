@@ -1,10 +1,15 @@
+/* Dasheng Lin
+ *  Account class is the basic account of the project that initial the 
+ *  account number, balance limit and interaction of balance
+ */
+
 public class Account
-{  
+{
     // field that store the account number of user
-    private String accountNumber;
+    private String accountNumber = "account number";
 
     // field that store the balance limit of user
-    private int balanceLimit;
+    private int balanceLimit = 0;
 
     // field that store the current balance of user
     private int balanceCurrent = 0;
